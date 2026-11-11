@@ -1,0 +1,981 @@
+
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Mariana Moreira | Data Analytics</title>
+
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+  <style>
+    :root {
+      --bg: #090b14;
+      --sidebar: #101321;
+      --card: #151929;
+      --border: #292d42;
+      --purple: #a78bfa;
+      --pink: #f472b6;
+      --cyan: #67e8f9;
+      --text: #f5f3ff;
+      --muted: #969bb5;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: Inter, "Segoe UI", Arial, sans-serif;
+      line-height: 1.6;
+    }
+
+    a { color: inherit; text-decoration: none; }
+
+    .layout {
+      display: flex;
+      min-height: 100vh;
+    }
+
+    /* MENU LATERAL */
+    .sidebar {
+      width: 245px;
+      background: var(--sidebar);
+      border-right: 1px solid var(--border);
+      padding: 28px 18px;
+      position: fixed;
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+      z-index: 10;
+    }
+
+    .logo {
+      font-size: 23px;
+      font-weight: 800;
+      color: var(--purple);
+      margin-bottom: 45px;
+      padding-left: 12px;
+    }
+
+    .logo span { color: white; }
+
+    .nav-link {
+      display: block;
+      padding: 13px 15px;
+      color: var(--muted);
+      border-radius: 10px;
+      margin-bottom: 8px;
+      transition: .25s;
+    }
+
+    .nav-link:hover,
+    .nav-link.active {
+      background: #a78bfa20;
+      color: var(--purple);
+    }
+
+    .sidebar-footer {
+      margin-top: auto;
+      font-size: 12px;
+      color: var(--muted);
+      padding: 12px;
+    }
+
+    /* CONTEÚDO */
+    .main {
+      margin-left: 245px;
+      padding: 35px;
+      width: calc(100% - 245px);
+      max-width: 1600px;
+    }
+
+    .topbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 30px;
+      gap: 15px;
+    }
+
+    .breadcrumb {
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    .status {
+      color: #86efac;
+      background: #22c55e15;
+      border: 1px solid #22c55e40;
+      border-radius: 30px;
+      padding: 7px 13px;
+      font-size: 12px;
+    }
+
+    /* APRESENTAÇÃO */
+    .hero {
+      background: radial-gradient(
+        ellipse at top right,
+        #7040b53b,
+        transparent 60%
+      ), var(--card);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 42px;
+      margin-bottom: 25px;
+    }
+
+    .eyebrow {
+      color: var(--purple);
+      font-size: 12px;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      font-weight: 700;
+    }
+
+    h1 {
+      font-size: clamp(30px, 4vw, 52px);
+      line-height: 1.15;
+      margin: 16px 0;
+    }
+
+    .gradient {
+      background: linear-gradient(90deg, var(--purple), var(--pink));
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+    }
+
+    .hero p {
+      color: var(--muted);
+      max-width: 650px;
+      margin-bottom: 25px;
+    }
+
+    .buttons {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    .btn {
+      display: inline-block;
+      padding: 12px 20px;
+      border-radius: 10px;
+      font-weight: 600;
+      font-size: 14px;
+      transition: .2s;
+    }
+
+    .btn:hover { transform: translateY(-3px); }
+
+    .primary {
+      background: var(--purple);
+      color: #100c1c;
+    }
+
+    .secondary {
+      border: 1px solid var(--border);
+      color: white;
+    }
+
+    /* SEÇÕES */
+    section { margin-bottom: 30px; }
+
+    .section-title {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 18px;
+      gap: 10px;
+    }
+
+    .section-title h2 { font-size: 20px; }
+
+    .section-title small { color: var(--muted); }
+
+    /* KPIs */
+    .kpis {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 16px;
+    }
+
+    .card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 23px;
+      min-width: 0;
+    }
+
+    .kpi-label {
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .kpi-number {
+      font-size: 32px;
+      font-weight: 800;
+      margin: 10px 0;
+    }
+
+    .kpi-detail {
+      color: var(--purple);
+      font-size: 12px;
+    }
+
+    /* GRÁFICOS */
+    .charts {
+      display: grid;
+      grid-template-columns: 1.5fr 1fr;
+      gap: 16px;
+    }
+
+    .chart-title {
+      font-size: 15px;
+      font-weight: 600;
+      margin-bottom: 5px;
+    }
+
+    .chart-subtitle {
+      color: var(--muted);
+      font-size: 12px;
+      margin-bottom: 20px;
+    }
+
+    .chart-container {
+      height: 260px;
+      position: relative;
+    }
+
+    /* HABILIDADES */
+    .skills {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .skill {
+      padding: 10px 16px;
+      background: #a78bfa12;
+      color: #c4b5fd;
+      border: 1px solid #a78bfa35;
+      border-radius: 9px;
+      font-size: 13px;
+    }
+
+    /* PROJETOS */
+    .filters {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-bottom: 18px;
+    }
+
+    .filter {
+      padding: 9px 15px;
+      background: var(--card);
+      color: var(--muted);
+      border: 1px solid var(--border);
+      border-radius: 9px;
+      cursor: pointer;
+      font-size: 13px;
+    }
+
+    .filter.active {
+      background: var(--purple);
+      color: #110b20;
+      border-color: var(--purple);
+    }
+
+    .projects {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 16px;
+    }
+
+    .project {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      overflow: hidden;
+      transition: .25s;
+    }
+
+    .project:hover {
+      border-color: var(--purple);
+      transform: translateY(-4px);
+    }
+
+    .project-cover {
+      height: 160px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background:
+        radial-gradient(circle at 75% 30%, #a78bfa55, transparent 45%),
+        linear-gradient(135deg, #252044, #141827);
+      font-size: 48px;
+    }
+
+    .project-content { padding: 22px; }
+
+    .project-content h3 {
+      margin-bottom: 8px;
+      font-size: 17px;
+    }
+
+    .project-content p {
+      color: var(--muted);
+      font-size: 13px;
+      margin-bottom: 15px;
+    }
+
+    .tags {
+      display: flex;
+      gap: 7px;
+      flex-wrap: wrap;
+      margin-bottom: 18px;
+    }
+
+    .tag {
+      background: #ffffff0b;
+      border: 1px solid var(--border);
+      color: #c4b5fd;
+      border-radius: 6px;
+      padding: 4px 9px;
+      font-size: 11px;
+    }
+
+    .project-link {
+      color: var(--purple);
+      font-size: 13px;
+      font-weight: 700;
+    }
+
+
+    /* Imagens reais dos projetos e botões de publicação */
+    .project-cover {
+      height: 190px;
+      overflow: hidden;
+      position: relative;
+    }
+    .project-cover img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+      transition: transform .3s ease;
+    }
+    .project:hover .project-cover img { transform: scale(1.05); }
+    .project-link.disabled { color: var(--muted); cursor: default; }
+    .project-content { display: flex; flex-direction: column; min-height: 220px; }
+    .project-content .tags { margin-top: auto; }
+
+    /* SOBRE E CONTATO */
+    .about-text {
+      color: var(--muted);
+      font-size: 14px;
+      max-width: 850px;
+    }
+
+    .contact-links {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin-top: 18px;
+    }
+
+    .contact-link {
+      border: 1px solid var(--border);
+      padding: 12px 17px;
+      border-radius: 10px;
+      font-size: 13px;
+      transition: .2s;
+    }
+
+    .contact-link:hover {
+      border-color: var(--purple);
+      color: var(--purple);
+    }
+
+    footer {
+      text-align: center;
+      color: var(--muted);
+      font-size: 12px;
+      padding: 25px;
+      border-top: 1px solid var(--border);
+    }
+
+    /* ANIMAÇÃO */
+    .reveal {
+      opacity: 0;
+      transform: translateY(20px);
+      transition: opacity .6s, transform .6s;
+    }
+
+    .reveal.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    /* RESPONSIVIDADE */
+    @media (max-width: 1050px) {
+      .kpis { grid-template-columns: repeat(2, 1fr); }
+      .charts { grid-template-columns: 1fr; }
+    }
+
+    @media (max-width: 760px) {
+      .layout { display: block; }
+
+      .sidebar {
+        position: sticky;
+        top: 0;
+        width: 100%;
+        height: auto;
+        padding: 12px;
+        flex-direction: row;
+        align-items: center;
+        overflow-x: auto;
+      }
+
+      .logo {
+        margin: 0 18px 0 0;
+        padding: 0;
+        font-size: 18px;
+        white-space: nowrap;
+      }
+
+      .sidebar nav {
+        display: flex;
+        gap: 5px;
+      }
+
+      .nav-link {
+        margin: 0;
+        padding: 8px;
+        white-space: nowrap;
+        font-size: 12px;
+      }
+
+      .sidebar-footer { display: none; }
+
+      .main {
+        margin-left: 0;
+        width: 100%;
+        padding: 18px;
+      }
+
+      .hero { padding: 25px; }
+      .projects { grid-template-columns: 1fr; }
+      .topbar { flex-wrap: wrap; }
+    }
+
+    @media (max-width: 390px) {
+      .kpis { grid-template-columns: 1fr; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        scroll-behavior: auto !important;
+        transition-duration: .01ms !important;
+      }
+    }
+ /* ============================================
+   HERO COM FOTO REDONDA (recorte sem fundo)
+   ============================================ */
+.hero {
+  display: grid;
+  grid-template-columns: 1.35fr 1fr;
+  gap: 48px;
+  align-items: center;
+  overflow: visible;
+}
+
+.hero-content { min-width: 0; }
+
+/* Coluna da foto */
+.hero-photo {
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 24px;
+}
+
+/* Glow colorido atrás do círculo */
+.photo-glow {
+  position: absolute;
+  width: 340px;
+  height: 340px;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  border-radius: 50%;
+  background:
+    radial-gradient(circle at 35% 35%, #a78bfa66, transparent 60%),
+    radial-gradient(circle at 65% 65%, #f472b655, transparent 60%),
+    radial-gradient(circle at 50% 85%, #67e8f944, transparent 60%);
+  filter: blur(24px);
+  z-index: 0;
+  pointer-events: none;
+}
+
+/* Moldura redonda com anel gradiente estático */
+.photo-frame {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  max-width: 300px;
+  aspect-ratio: 1 / 1;
+  border-radius: 50%;
+  padding: 5px; /* espessura do anel */
+  background: conic-gradient(
+    from 210deg,
+    var(--purple),
+    var(--pink),
+    var(--cyan),
+    var(--purple)
+  );
+  box-shadow:
+    0 0 0 1px #ffffff0d,
+    0 30px 60px -20px #a78bfa66,
+    0 0 90px -20px #f472b655,
+    0 0 120px -40px #67e8f944;
+  transition: transform .4s ease, box-shadow .4s ease;
+}
+
+/* Camada interna escura (faz o anel "vazar") */
+.photo-frame::before {
+  content: "";
+  position: absolute;
+  inset: 5px;
+  border-radius: 50%;
+  background: var(--card);
+  z-index: 0;
+}
+
+/* A foto recortada dentro do círculo */
+.photo-frame img {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center top; /* mantém o rosto enquadrado */
+  border-radius: 50%;
+  display: block;
+  transition: transform .5s ease;
+}
+
+/* Hover: elevação + glow mais intenso (sem girar) */
+.hero-photo:hover .photo-frame {
+  transform: translateY(-4px);
+  box-shadow:
+    0 0 0 1px #ffffff1a,
+    0 40px 70px -20px #a78bfa99,
+    0 0 110px -20px #f472b677,
+    0 0 150px -40px #67e8f966;
+}
+
+.hero-photo:hover .photo-frame img {
+  transform: scale(1.04);
+}
+
+/* Responsividade */
+@media (max-width: 900px) {
+  .hero {
+    grid-template-columns: 1fr;
+    text-align: center;
+    gap: 30px;
+  }
+
+  .hero-content p { margin-left: auto; margin-right: auto; }
+  .hero .buttons { justify-content: center; }
+  .hero-photo { order: -1; padding: 12px; }
+
+  .photo-frame { max-width: 220px; padding: 4px; }
+  .photo-frame::before { inset: 4px; }
+  .photo-glow { width: 260px; height: 260px; }
+}
+
+/* Acessibilidade */
+@media (prefers-reduced-motion: reduce) {
+  .photo-frame,
+  .photo-frame img { transition: none; }
+}
+  </style>
+</head>
+
+<body>
+<div class="layout">
+
+  <!-- MENU -->
+  <aside class="sidebar">
+    <div class="logo">Meu<span>Portfólio</span></div>
+
+    <nav>
+      <a class="nav-link active" href="#inicio">◈ Visão geral</a>
+      <a class="nav-link" href="#dashboard">▥ Dashboard</a>
+      <a class="nav-link" href="#habilidades">✦ Skills/Tech Stack</a>
+      <a class="nav-link" href="#projetos">▣ Projetos</a>
+      <a class="nav-link" href="#sobre">◉ Sobre mim</a>
+      <a class="nav-link" href="#contato">✉ Contato</a>
+    </nav>
+
+    <div class="sidebar-footer">
+      
+    </div>
+  </aside>
+
+  <!-- CONTEÚDO -->
+  <main class="main">
+
+    <div class="topbar">
+      <div class="breadcrumb"></div>
+      <div class="status">● Aberta a oportunidades</div>
+    </div>
+
+ <!-- INÍCIO -->
+<section id="inicio" class="hero reveal">
+  <div class="hero-content">
+    <div class="eyebrow">Bem-vindo ao meu portfólio!</div>
+
+    <h1>
+      Olá, eu me chamo <span class="gradient">Mariana Moreira.</span><br>
+      Futura analista de dados.
+    </h1>
+
+    <p>
+      Estudante de Ciência da Computação apaixonada por
+      análise de dados, tecnologia e visualização de informações.
+      Explorando dados para encontrar padrões, responder
+      perguntas e transformar números em conhecimento.
+    </p>
+
+    <div class="buttons">
+      <a href="#projetos" class="btn primary">Explorar projetos ↗</a>
+      <a href="#contato" class="btn secondary">Entre em contato</a>
+    </div>
+  </div>
+
+  <div class="hero-photo">
+    <div class="photo-glow" aria-hidden="true"></div>
+    <div class="photo-frame">
+      <img src="imgs/Imagem do ChatGPT 10 de nov. de 2026, 16_39_05.jpg" alt="Foto de Mariana Moreira" loading="lazy">
+    </div>
+  </div>
+</section>
+
+    <!-- INDICADORES -->
+    <section id="dashboard" class="reveal">
+      <div class="section-title">
+        <h2>Dashboard Overview</h2>
+        <small>Dados</small>
+      </div>
+
+      <div class="kpis">
+        <div class="card">
+          <div class="kpi-label">Projetos em destaque</div>
+          <div class="kpi-number">04</div>
+          <div class="kpi-detail">Projetos apresentados</div>
+        </div>
+
+        <div class="card">
+          <div class="kpi-label">Tecnologias listadas</div>
+          <div class="kpi-number">06</div>
+          <div class="kpi-detail">Ferramentas e linguagens</div>
+        </div>
+
+        <div class="card">
+          <div class="kpi-label">Áreas exploradas</div>
+          <div class="kpi-number">03</div>
+          <div class="kpi-detail">BI, programação e SQL</div>
+        </div>
+
+        <div class="card">
+          <div class="kpi-label">Status</div>
+          <div class="kpi-number" style="font-size:23px">Em evolução</div>
+          <div class="kpi-detail">Aprendizado contínuo</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- GRÁFICOS -->
+    <section class="charts reveal">
+
+      <div class="card">
+        <div class="chart-title">Distribuição por área</div>
+        <div class="chart-subtitle">
+          Distribuição por áreas de interesse
+        </div>
+        <div class="chart-container">
+          <canvas id="skillsChart"></canvas>
+        </div>
+      </div>
+    </section>
+
+    <!-- HABILIDADES -->
+    <section id="habilidades" class="reveal">
+      <div class="section-title">
+        <h2>Tech Stack</h2>
+        <small>Ferramentas e tecnologias</small>
+      </div>
+
+      <div class="card">
+        <div class="skills">
+          <span class="skill"> Python</span>
+          <span class="skill"> Pandas</span>
+          <span class="skill"> Power BI</span>
+          <span class="skill"> SQL</span>
+          <span class="skill"> Excel</span>
+          <span class="skill"> Matplotlib</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- PROJETOS -->
+    <section id="projetos" class="reveal">
+      <div class="section-title">
+        <h2>Projetos </h2>
+        <small>4 projetos em destaque</small>
+      </div>
+
+      <div class="filters">
+        <button class="filter active" data-filter="todos">Todos</button>
+        <button class="filter" data-filter="powerbi">Power BI</button>
+        <button class="filter" data-filter="python">Python</button>
+        <button class="filter" data-filter="sql">SQL</button>
+      </div>
+
+      <div class="projects">
+                <article class="project" data-category="python">
+          <div class="project-cover">
+            <img src="imgs/brasileiros-canada.png" alt="Gráfico de imigração brasileira para o Canadá" loading="lazy" onerror="this.style.display='none'">
+          </div>
+          <div class="project-content">
+            <h3>Brasileiros no Canadá (1980–2024)</h3>
+            <p>Análise histórica da imigração brasileira para o Canadá com dados oficiais do IRCC. Compara o Brasil com outros países sul-americanos e identifica picos migratórios.</p>
+            <div class="tags">
+              <span class="tag">Python</span>
+              <span class="tag">Pandas</span>
+              <span class="tag">Matplotlib</span>
+            </div>
+            <a class="project-link" href="https://github.com/m4rimoreira/brasileiros-canada" target="_blank" rel="noopener noreferrer">
+              Ver no GitHub ↗
+            </a>
+          </div>
+        </article>
+<article class="project" data-category="python">
+  <div class="project-cover">
+    <img src="imgs/wrappedImg.png" alt="Análise de dados do Spotify" loading="lazy" onerror="this.style.display='none'">
+  </div>
+  <div class="project-content">
+    <h3>Spotify Wrapped Analytics</h3>
+    <p>Análise profunda dos hábitos musicais usando Python. Inclui ranking de artistas, horários de pico, evolução mensal e detecção de músicas repetidas.</p>
+    <div class="tags">
+      <span class="tag">Python</span>
+      <span class="tag">Pandas</span>
+      <span class="tag">Seaborn</span>
+    </div>
+    <a class="project-link" href="https://github.com/m4rimoreira/spotify-wrapped" target="_blank" rel="noopener noreferrer">
+      Ver no GitHub ↗
+    </a>
+  </div>
+</article>
+
+<article class="project" data-category="powerbi">
+  <div class="project-cover">
+    <img src="imgs/dashboard-filmes.png" alt="Dashboard de análise de filmes no Power BI" loading="lazy" onerror="this.style.display='none'">
+  </div>
+  <div class="project-content">
+    <h3>Dashboard de Análise de Filmes</h3>
+    <p>Dashboard interativo no Power BI com análise de bilheteria, avaliações e tendências do cinema. Inclui KPIs, análise por gênero e evolução temporal.</p>
+    <div class="tags">
+      <span class="tag">Power BI</span>
+      <span class="tag">DAX</span>
+      <span class="tag">Python</span>
+    </div>
+    <a class="project-link" href="https://github.com/m4rimoreira/dashboard-filmes" target="_blank" rel="noopener noreferrer">
+      Ver no GitHub ↗
+    </a>
+  </div>
+</article>
+
+        <article class="project" data-category="sql python">
+  <div class="project-cover">
+    <img src="imgs/grafico-categorias.png" alt="Análise SQL de e-commerce" loading="lazy" onerror="this.style.display='none'">
+  </div>
+  <div class="project-content">
+    <h3>E-commerce Analytics com SQL</h3>
+    <p>Análise de vendas com SQL (SQLite): faturamento por categoria, top clientes, ticket médio por estado e evolução mensal. Consultas com JOIN, GROUP BY, CTEs e window functions.</p>
+    <div class="tags">
+      <span class="tag">SQL</span>
+      <span class="tag">SQLite</span>
+      <span class="tag">Python</span>
+    </div>
+    <a class="project-link" href="https://github.com/m4rimoreira/ecommerce-sql" target="_blank" rel="noopener noreferrer">
+      Ver no GitHub ↗
+    </a>
+  </div>
+</article>
+      </div>
+    </section>
+
+    <!-- SOBRE -->
+    <section id="sobre" class="reveal">
+      <div class="section-title">
+        <h2>Sobre mim</h2>
+      </div>
+
+      <div class="card">
+        <p class="about-text">
+         Sou estudante de Ciência da Computação com 
+         foco em Análise de Dados e Business Intelligence. 
+         Desenvolvo projetos práticos de extração, tratamento 
+         e visualização de dados, utilizando Python 
+         (Pandas, Matplotlib), SQL e Power BI para transformar 
+         dados brutos em insights de negócio.
+        </p>
+      </div>
+    </section>
+
+    <!-- CONTATO -->
+    <section id="contato" class="reveal">
+      <div class="section-title">
+        <h2>Vamos nos conectar!</h2>
+      </div>
+
+      <div class="card">
+        <p class="about-text">
+          Vamos conversar sobre tecnologia, dados e oportunidades?
+        </p>
+
+        <div class="contact-links">
+          <a class="contact-link" href="https://github.com/m4rimoreira"
+             target="_blank" rel="noopener noreferrer">
+            GitHub ↗
+          </a>
+          <a class="contact-link" href="https://www.linkedin.com/in/mariana-moreira-9b2b2b2aa"
+             target="_blank" rel="noopener noreferrer">
+            LinkedIn ↗
+          </a>
+          <a class="contact-link" href="mailto:moreiramariana251@gmail.com">
+            E-mail ↗
+          </a>
+        </div>
+      </div>
+    </section>
+
+    <footer>
+      © <span id="year"></span> Mariana Moreira • Analista de Dados |  Data Analyst
+    </footer>
+
+  </main>
+</div>
+
+<script>
+  // ANO AUTOMÁTICO
+  document.getElementById("year").textContent =
+    new Date().getFullYear();
+
+  // CONFIGURAÇÃO DOS GRÁFICOS
+  if (typeof Chart !== "undefined") {
+    Chart.defaults.color = "#969bb5";
+    Chart.defaults.font.family = "Segoe UI, Arial, sans-serif";
+    // GRÁFICO DE DISTRIBUIÇÃO
+    new Chart(document.getElementById("skillsChart"), {
+      type: "doughnut",
+      data: {
+        labels: ["Power BI", "Python", "SQL"],
+        datasets: [{
+          data: [35, 40, 25],
+          backgroundColor: [
+            "#a78bfa",
+            "#f472b6",
+            "#67e8f9"
+          ],
+          borderColor: "#151929",
+          borderWidth: 5,
+          hoverOffset: 8
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        cutout: "70%",
+        plugins: {
+          legend: {
+            position: "bottom",
+            labels: {
+              padding: 15,
+              usePointStyle: true
+            }
+          }
+        }
+      }
+    });
+  }
+
+  // FILTROS DE PROJETOS
+  const filters = document.querySelectorAll(".filter");
+  const projects = document.querySelectorAll(".project");
+
+  filters.forEach(button => {
+    button.addEventListener("click", () => {
+      filters.forEach(item => item.classList.remove("active"));
+      button.classList.add("active");
+
+      const selected = button.dataset.filter;
+
+      projects.forEach(project => {
+        const categories = project.dataset.category.split(" ");
+
+        project.style.display =
+          selected === "todos" || categories.includes(selected)
+            ? ""
+            : "none";
+      });
+    });
+  });
+
+  // ANIMAÇÕES AO ROLAR
+  if ("IntersectionObserver" in window) {
+    const observer = new IntersectionObserver(entries => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add("visible");
+          observer.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.08 });
+
+    document.querySelectorAll(".reveal").forEach(element => {
+      observer.observe(element);
+    });
+  } else {
+    document.querySelectorAll(".reveal").forEach(element => {
+      element.classList.add("visible");
+    });
+  }
+
+  // MENU ATIVO
+  const navLinks = document.querySelectorAll(".nav-link");
+
+  navLinks.forEach(link => {
+    link.addEventListener("click", () => {
+      navLinks.forEach(item => item.classList.remove("active"));
+      link.classList.add("active");
+    });
+  });
+</script>
+
+</body>
+</html>
